@@ -82,11 +82,11 @@
 
 (defmacro defconstrainedfn
   "Defines a function using the `contract` scheme with an additional `:body` element.
-
     (defconstrainedfn sqr
       \"Squares a number\"
       [n]
       :requires
+      \"n must be a number\"
       (number? n)
       (not= 0 n)
 
@@ -110,9 +110,10 @@
                 body)
         body  (for [bd (build-forms-map body)] 
                 (let [arg (first (keys bd))
-                      b   (first (vals bd))]
+                      b   (first (vals bd))
+		      pre (vec (b '(:requires)))]
                   (list* arg
-                         {:pre  (vec (b '(:requires)))
+                         {:pre (map requirements (prep-conditions pre))
                           :post (vec (b '(:ensures)))}
                          (b '(:body)))))]
     `(defn ~name

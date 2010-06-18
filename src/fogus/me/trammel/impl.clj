@@ -43,3 +43,30 @@
     {e (apply hash-map c)}))
 
 
+(defmacro required 
+  "wrapper for and that has a better name: denotes :pre requirements"
+  [& args]
+  `(and ~@args))
+
+(defn requirements 
+  "given a map of test sexp and string message, wraps these values in a 
+   use of required"
+  [mp] 
+  (if (:msg mp) 
+    (list 'required (:test mp) (:msg mp)) 
+    (list 'required (:test mp))))
+
+(defn prep-conditions [conditions]
+  (letfn [(prep [[pair & partitioned-conditions]]
+	  (if (and (string? (first pair)) (not (nil? (second pair))))
+	    (cons {:msg (first pair) :test (second pair)}
+		  (if (nil? (second partitioned-conditions))
+		    '()
+		    (prep (drop 1 partitioned-conditions))))
+	    (cons {:msg nil :test (first pair)}
+		  (if (nil? partitioned-conditions)
+		    '()
+		    (prep partitioned-conditions)))))]
+    (prep (partition 2 1 '() conditions))))
+
+
