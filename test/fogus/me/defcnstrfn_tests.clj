@@ -20,7 +20,9 @@
   "test"
   ([x]
      :requires
+     "Must be a number"
      (number? x)
+     "Must be positive"
      (pos? x)
      
      :ensures
@@ -51,10 +53,12 @@
 (defconstrainedfn sqr
   "Calculates the square of a number."
   [n]
+  
   :requires
   (number? n)
+  "Must not be zero"
   (not (zero? n))
-  
+
   :ensures
   (pos? %)
 
@@ -70,7 +74,9 @@
 (defconstrainedfn no-doc-sqr
   [n]
   :requires
+  "Argument should be a number"
   (number? n)
+  "Argument should not be zero"
   (not (zero? n))
   
   :ensures
