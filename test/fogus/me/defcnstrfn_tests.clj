@@ -19,9 +19,7 @@
   "test"
   ([x]
      :requires
-     "Must be a number"
      (number? x)
-     "Must be positive"
      (pos? x)
      
      :ensures
@@ -55,7 +53,6 @@
   
   :requires
   (number? n)
-  "Must not be zero"
   (not (zero? n))
 
   :ensures
@@ -73,9 +70,7 @@
 (defconstrainedfn no-doc-sqr
   [n]
   :requires
-  "Argument should be a number"
   (number? n)
-  "Argument should not be zero"
   (not (zero? n))
   
   :ensures
@@ -90,7 +85,42 @@
   (is (thrown? Error (no-doc-sqr 0)))
   (is (thrown? Error (no-doc-sqr :gibbon))))
 
-(deftest defconstrainedfn-test
-  (multibody-cnstr-fn-test)
-  (singlebody-cnstr-fn-test)
-  (no-doc-cnstr-fn-test))
+(defconstrainedfn with-condition-messages
+  "test"
+  ([x]
+     :requires
+     "Must be a number"
+     (number? x)
+     "Must be positive"
+     (pos? x)
+     
+     :ensures
+     "Must return a float"
+     (float? %)
+     
+     :body
+     x) ; <= won't pass ensure condition
+  ([x y]
+     :requires
+     "Must be a number"
+     (every? number? [x y])
+     "Must be positive"
+     (every? pos?    [x y])
+     
+     :ensures
+     "Must return a float"
+     (every? float? %)
+     
+     :body
+     (str "this is a noop, meant to ensure that multi-expr bodies work")
+     [(float x) y]))
+
+(deftest  with-condition-messages-test
+  (is (thrown-with-msg? Error #"Must be positive"    (with-condition-messages -1)))
+  (is (thrown-with-msg? Error #"Must be a number"    (with-condition-messages "1")))
+  (is (thrown-with-msg? Error #"Must return a float" (with-condition-messages 1)))
+
+  (is (thrown-with-msg? Error #"Must be positive"    (with-condition-messages -1 2)))
+  (is (thrown-with-msg? Error #"Must be a number"    (with-condition-messages 1 "2")))
+  (is (thrown-with-msg? Error #"Must return a float" (with-condition-messages 1 2))))
+
