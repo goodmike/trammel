@@ -109,12 +109,13 @@
                 (next body)
                 body)
         body  (for [bd (build-forms-map body)] 
-                (let [arg (first (keys bd))
-                      b   (first (vals bd))
-		      pre (vec (b '(:requires)))]
+                (let [arg  (first (keys bd))
+                      b    (first (vals bd))
+		      pre  (vec (b '(:requires)))
+		      post (vec (b '(:ensures)))]
                   (list* arg
-                         {:pre (map requirements (prep-conditions pre))
-                          :post (vec (b '(:ensures)))}
+                         {:pre  (map requirement (prep-conditions pre))
+                          :post (map ensurance (prep-conditions post))}
                          (b '(:body)))))]
     `(defn ~name
        ~(if (:doc mdata) (:doc mdata) "")

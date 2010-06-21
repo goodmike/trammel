@@ -47,15 +47,20 @@
   [& args]
   `(and ~@args))
 
-(defn requirements 
-  "Given a map of test sexp and string message, wraps these values, and the
-   keyword :required, in a use of `and`.
-   I'd sure rather be able to use the required macro instead"
-  [mp] 
+(defn build-conditions 
+  "Given a label and a map {:test sexp :msg string}, wraps these values, and a 
+   keyword 'label' in a use of `and`.
+   I'd sure rather be able to use the required macro instead."
+  [label mp] 
   (if (:msg mp) 
-    (list 'and :required (:msg mp) (:test mp)) 
-    (list 'and :required (:test mp))))
+    (list 'and label (:msg mp) (:test mp)) 
+    (list 'and label (:test mp))))
 
+(defn requirement [mp]
+  (build-conditions :required mp))
+
+(defn ensurance [mp]
+  (build-conditions :ensured mp))
 
 (defn prep-conditions [conditions]
   (letfn [(prep [[pair & partitioned-conditions]]
