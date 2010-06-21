@@ -42,19 +42,20 @@
                          forms))]
     {e (apply hash-map c)}))
 
-
 (defmacro required 
-  "wrapper for and that has a better name: denotes :pre requirements"
+  "Wrapper for `and` that has a better name: denotes :pre requirements"
   [& args]
   `(and ~@args))
 
 (defn requirements 
-  "given a map of test sexp and string message, wraps these values in a 
-   use of required"
+  "Given a map of test sexp and string message, wraps these values, and the
+   keyword :required, in a use of `and`.
+   I'd sure rather be able to use the required macro instead"
   [mp] 
   (if (:msg mp) 
-    (list 'required (:test mp) (:msg mp)) 
-    (list 'required (:test mp))))
+    (list 'and :required (:msg mp) (:test mp)) 
+    (list 'and :required (:test mp))))
+
 
 (defn prep-conditions [conditions]
   (letfn [(prep [[pair & partitioned-conditions]]

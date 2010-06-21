@@ -13,7 +13,6 @@
 
 (ns fogus.me.defcnstrfn-tests
   (:use [fogus.me.trammel :only [defconstrainedfn]])
-  (:use [fogus.me.trammel.impl])
   (:use [clojure.test :only [deftest is]]))
 
 (defconstrainedfn positive-nums
